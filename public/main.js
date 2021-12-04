@@ -3,6 +3,8 @@ let sceneLoader = new SceneLoader([],document.body)
 let sceneIndex = 2;
 
 let controlUp = false;
+let controlDown = false;
+let controlSpace = false;
 
 class MainScene extends Scene{
     //add html here
@@ -29,7 +31,9 @@ class LvlScene extends Scene{
     }
 }
 class SpaceInvaders extends Scene {
-    dom = "";
+    dom = '<div class="spaceInvaders-wrapper">'+
+    '<canvas id="canvas" width="900" height="700"></canvas>'+
+    '</div>';
 
     main(){
 
