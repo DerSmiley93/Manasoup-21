@@ -42,9 +42,26 @@ class SpaceInvaders extends Scene {
 }
 
 class Invader extends GameObject{
+    //Hier Kollisionslogik mit Geschossen einbauen
+
     draw(ctx){
         ctx.fillRect(2,2,2,2);
     }
+}
+
+class Bullet extends GameObject{
+
+    //Form: Quadrat oder rechteck, klein
+    //Flugbahn: Linear
+    //Logik: TODO
+
+}
+
+class Cannon extends GameObject{
+
+    // Hier Kollisionslogik mit Geschossen & Invaders einbauen
+
+
 }
 
 class Paddle extends GameObject{
