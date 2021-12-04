@@ -33,6 +33,9 @@ class LvlScene extends Scene{
 
     }
 }
+
+
+//Space invaders
 class SpaceInvaders extends Scene {
     dom = '<div class="spaceInvaders-wrapper">'+
     '<canvas id="canvas" width="900" height="700"></canvas>'+
@@ -43,13 +46,11 @@ class SpaceInvaders extends Scene {
 
     }
 }
-
 class Invader extends GameObject{
     //Hier Kollisionslogik mit Geschossen einbauen
-
+    
     
 }
-
 class Bullet extends GameObject{
 
     //Form: Quadrat oder rechteck, klein
@@ -57,7 +58,6 @@ class Bullet extends GameObject{
     //Logik: TODO
 
 }
-
 class Cannon extends GameObject{
 
     // Hier Kollisionslogik mit Geschossen & Invaders einbauen
@@ -65,6 +65,8 @@ class Cannon extends GameObject{
 
 }
 
+
+//pong
 class Paddle extends GameObject{
     center;
     isbot = false;
@@ -98,7 +100,6 @@ class Paddle extends GameObject{
         ctx.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y);
     }
 }
-
 class Ball extends GameObject{
     vle = 7;
     dir = new Vector2(0,0);
@@ -111,7 +112,6 @@ class Ball extends GameObject{
         ctx.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y);
     }
 }
-
 class Pong extends Scene{
     dom = '<div class="pong-wrapper">'+
     '<canvas id="canvas" width="900" height="700"></canvas>'+
@@ -123,6 +123,7 @@ class Pong extends Scene{
     pad1 = new Paddle(new Vector2(0,0),new Vector2(15,120),new Vector2(0,0))
     pad2 = new Paddle(new Vector2(0,0),new Vector2(15,120),new Vector2(0,0))
     ball = new Ball(new Vector2(0,0),new Vector2(15,15))
+    score = new Vector2(0,0);
 
     main(){
         this.canvas = document.getElementById("canvas");
@@ -152,8 +153,20 @@ class Pong extends Scene{
 
         if(this.ball.pos.x < 0){
             this.reset();
+            this.score.x += 1;
         }
         if(this.ball.pos.x + this.ball.size.x > this.canvas.width){
+            this.score.y += 1;
+            this.reset();
+        }
+
+        if(this.score.y == 10){
+            this.exit();   
+        }
+        
+        if(this.score.x == 10){
+            this.score.x == 0
+            this.score.y == 0;
             this.reset();
         }
 
@@ -175,6 +188,9 @@ class Pong extends Scene{
         this.pad1.draw(this.ctx);
         this.pad2.draw(this.ctx);
         this.ball.draw(this.ctx);
+        this.ctx.font = '50px san-serif'
+        this.ctx.fillText(String(this.score.y),60,50,600)
+        this.ctx.fillText(String(this.score.x),this.canvas.width - 80,50,600)
     }
 
     reset(){
@@ -194,6 +210,7 @@ class Pong extends Scene{
 
     exit(){
         clearInterval(this.mainLoop);
+        sceneLoader.load(0);
     }
     
 
@@ -208,7 +225,7 @@ window.onload = ()=>{
     
     sceneLoader.load(sceneIndex);
 }
-
+//event handler
 function play(){
     sceneLoader.load(1);
 }
