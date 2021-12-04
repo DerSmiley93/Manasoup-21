@@ -1,14 +1,12 @@
 let sceneLoader = new SceneLoader([],document.body)
 //debugging variable
-let sceneIndex = 3;
+let sceneIndex = 4;
 
 let controlUp = false;
 let controlDown = false;
 let controlLeft = false;
 let controlRight = false;
 let controlSpace = false;
-let controlLeft = false;
-let controlRight = false;
 
 //UI
 class MainScene extends Scene{
@@ -36,23 +34,7 @@ class LvlScene extends Scene{
 }
 
 
-//Space invaders
-class SpaceInvaders extends Scene {
-    dom = '<div class="spaceInvaders-wrapper">'+
-    '<canvas id="canvas" width="900" height="700"></canvas>'+
-    '</div>';
 
-    mainLoop = null;
-    ctx = null;
-    canvas = null;
-
-    player = new Cannon(new Vector2(30, 80), new Vector2(15,15));
-    test_invader = new Invader(new Vector2(30, 10), new Vector2(20, 20));
-    main(){
-
-
-    }
-}
 class Invader extends GameObject{
     speed = 1; // Ggf. andere Forbewegungsmethode einbauen!
     
@@ -84,11 +66,47 @@ class Cannon extends GameObject{
         }
     }
 
+    draw(ctx){
+        ctx.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y);
+    }
+
     // Hier Kollisionslogik mit Geschossen & Invaders einbauen
 
 
 }
 
+//Space invaders
+class SpaceInvaders extends Scene {
+    dom = '<div class="spaceInvaders-wrapper">'+
+    '<canvas id="canvas" width="900" height="700"></canvas>'+
+    '</div>';
+
+    mainLoop = null;
+    ctx = null;
+    canvas = null;
+
+    player = new Cannon(new Vector2(30, 80), new Vector2(15,15));
+    test_invader = new Invader(new Vector2(30, 10), new Vector2(20, 20));
+    main(){
+        this.canvas = document.getElementById("canvas");
+        this.ctx = canvas.getContext("2d");
+        this.ctx.fillStyle = "white";
+
+        this.reset();
+
+        this.mainLoop = setInterval(()=>{
+            this.update();
+            this.draw();
+        },16)
+
+
+    }
+
+    draw(){
+        this.player.draw(this.ctx);
+        this.test_invader.draw(this.ctx);
+    }
+}
 
 //Pong
 class Paddle extends GameObject{
@@ -371,7 +389,7 @@ class SnakeBody extends GameObject{
 
 window.onload = ()=>{
     //add scenes here
-    let scenes = [new MainScene(), new LvlScene(),new Pong(), new SpaceInvaders()];
+    let scenes = [new MainScene(), new LvlScene(),new Pong(), new Snake(), new SpaceInvaders()];
 
     wrapper = document.getElementById("wrapper");
     sceneLoader = new SceneLoader(scenes,wrapper);
