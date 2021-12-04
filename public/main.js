@@ -39,12 +39,26 @@ class Invader extends GameObject{
     speed = 1; // Ggf. andere Forbewegungsmethode einbauen!
     
     //Hier Kollisionslogik mit Geschossen einbauen
-    
+    update(){
+
+    }
+
+    draw(ctx){
+        ctx.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y);
+    }
     
 }
 class Bullet extends GameObject{
     speed = 3;
 
+
+    update(){
+
+    }
+
+    draw(ctx){
+        ctx.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y)
+    }
     //Form: Quadrat oder rechteck, klein
     //Flugbahn: Linear
     //Logik: TODO
@@ -99,6 +113,14 @@ class SpaceInvaders extends Scene {
             this.draw();
         },16)
 
+
+    }
+
+    update(){
+
+    }
+
+    reset(){
 
     }
 
@@ -330,7 +352,6 @@ class Snake extends Scene{
         sceneLoader.load(1);
     }
 }
-
 class Food extends GameObject{
     
     draw(ctx){
@@ -338,7 +359,6 @@ class Food extends GameObject{
         ctx.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y);
     }
 }
-
 class SnakeBody extends GameObject{
     dir = new Vector2(1,0);
     tail = [];
@@ -389,7 +409,8 @@ class SnakeBody extends GameObject{
 
 window.onload = ()=>{
     //add scenes here
-    let scenes = [new MainScene(), new LvlScene(),new Pong(), new Snake(), new SpaceInvaders()];
+    let scenes = [new MainScene(), new LvlScene(),new Pong(),new Snake() , new SpaceInvaders()];
+
 
     wrapper = document.getElementById("wrapper");
     sceneLoader = new SceneLoader(scenes,wrapper);
