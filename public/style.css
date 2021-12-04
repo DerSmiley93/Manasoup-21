@@ -1,0 +1,56 @@
+body{
+    margin: 0px;
+    padding: 0px;
+    color: white;
+    font-family: 'Roboto Mono', monospace;
+}
+
+#wrapper{
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+}
+
+.mainMenue-wrapper{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.title{
+    font-size: 60px;
+    font-weight: 500;
+}
+
+.mainMenue-button{
+    width: 300px;
+    height: 100px;
+    font-size: 50px;
+    align-self: center;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 600;
+    margin: 20px;
+    border-radius: 20px;
+}
+
+.lvlMenue-wrapper{
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+.lvlMenue-header{
+    border-bottom: solid white 2px;
+    width: 100%;
+    height: 50px;
+}
+.material-icons{
+    margin: 10px;
+    user-select: none;
+}
+.material-icons:hover{
+    cursor: pointer;
+}
