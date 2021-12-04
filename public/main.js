@@ -1,11 +1,13 @@
 let sceneLoader = new SceneLoader([],document.body)
 //debuging variable
-let sceneIndex = 0;
+let sceneIndex = 2;
+
+let controlUp = false;
 
 class MainScene extends Scene{
     //add html here
     dom = '<div class="mainMenue-wrapper">'+
-    '<h1 class="title">Es War Einmal</h1>'+
+    '<h1 class="title">Es War Einmal...</h1>'+
     '<button onclick="play()" class="mainMenue-button">Play</button>'+
     '</div>';
 
@@ -27,9 +29,19 @@ class LvlScene extends Scene{
     }
 }
 
+class Pong extends Scene{
+    dom = '<div class="pong-wrapper">'+
+    '<canvas id="canvas" width="900" height="700"></canvas>'+
+    '</div>';
+    
+    main(){
+
+    }
+}
+
 window.onload = ()=>{
     //add scenes here
-    let scenes = [new MainScene(), new LvlScene()];
+    let scenes = [new MainScene(), new LvlScene(),new Pong()];
 
     wrapper = document.getElementById("wrapper");
     sceneLoader = new SceneLoader(scenes,wrapper);
@@ -47,4 +59,28 @@ function goBack(){
 
 function pickLvl(id){
     screen.load(id + 2)
+}
+
+
+document.onkeydown  = e =>{
+    switch(e.key){
+        case "w":
+            controlUp = true;
+        break;
+        case "s":
+            controlDown = true;
+            break;
+    }
+}
+
+document.onkeyup  = e =>{
+    switch(e.key){
+        case "w":
+            controlUp = false;
+            
+        break;
+        case "s":
+            controlDown = false;
+            break;
+    }
 }
