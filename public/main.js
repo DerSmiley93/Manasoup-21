@@ -5,6 +5,8 @@ let sceneIndex = 2;
 let controlUp = false;
 let controlDown = false;
 let controlSpace = false;
+let controlLeft = false;
+let controlRight = false;
 
 
 class MainScene extends Scene{
@@ -67,20 +69,20 @@ class Paddle extends GameObject{
     center;
     isbot = false;
     speed = 5;
-    update(ball){
+    update(ball){ 
         this.center = new Vector2(this.pos.x + this.size.x / 2,this.pos.y + this.size.y / 2);
         if(this.checkColision(ball)){
             ball.dir.x = -ball.dir.x
             ball.dir.y = (ball.pos.y - this.center.y) / 50
         }
 
-        if(controlUp && !this.isbot){
+        if(controlUp && !this.isbot){ // Steuerung des Paddles
             this.pos.y += -this.speed;
         }else if(controlDown && !this.isbot){
             this.pos.y += this.speed;
         }
 
-        if(this.isbot){
+        if(this.isbot){ //KI-Logik - Funktioniert nur für eine Seite
            if(ball.dir.x > 0 && ball.pos.x > 300){
                if(ball.pos.y > this.pos.y + this.size.y / 2){
                    this.pos.y += this.speed / 1.5;
