@@ -4,10 +4,7 @@ let sceneIndex = 2;
 
 let controlUp = false;
 let controlDown = false;
-<<<<<<< HEAD
 let controlSpace = false;
-=======
->>>>>>> 1727d8d6a24f3e029754ed9561a7e856f4fa439a
 
 class MainScene extends Scene{
     //add html here
@@ -41,6 +38,12 @@ class SpaceInvaders extends Scene {
     main(){
 
 
+    }
+}
+
+class Invader extends GameObject{
+    draw(ctx){
+        ctx.fillRect(2,2,2,2);
     }
 }
 
