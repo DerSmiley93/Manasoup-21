@@ -28,6 +28,14 @@ class LvlScene extends Scene{
 
     }
 }
+class SpaceInvaders extends Scene {
+    dom = "";
+
+    main(){
+
+
+    }
+}
 
 class Pong extends Scene{
     dom = '<div class="pong-wrapper">'+
