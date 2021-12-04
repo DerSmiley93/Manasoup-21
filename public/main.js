@@ -1,6 +1,6 @@
 let sceneLoader = new SceneLoader([],document.body)
-//debuging variable
-let sceneIndex = 2;
+//debugging variable
+let sceneIndex = 3;
 
 let controlUp = false;
 let controlDown = false;
@@ -41,17 +41,26 @@ class SpaceInvaders extends Scene {
     '<canvas id="canvas" width="900" height="700"></canvas>'+
     '</div>';
 
+    mainLoop = null;
+    ctx = null;
+    canvas = null;
+
+    player = new Cannon(new Vector2(30, 80), new Vector2(15,15));
+    test_invader = new Invader(new Vector2(30, 10), new Vector2(20, 20));
     main(){
 
 
     }
 }
 class Invader extends GameObject{
+    speed = 1; // Ggf. andere Forbewegungsmethode einbauen!
+    
     //Hier Kollisionslogik mit Geschossen einbauen
     
     
 }
 class Bullet extends GameObject{
+    speed = 3;
 
     //Form: Quadrat oder rechteck, klein
     //Flugbahn: Linear
@@ -59,6 +68,20 @@ class Bullet extends GameObject{
 
 }
 class Cannon extends GameObject{
+    speed = 6;
+    update(bullet){
+        if(this.checkColision(bullet)) {
+            this.speed = 6; // Platzhalter für Zerstörungsfunktion
+        }
+
+        if(controlLeft == true){
+            this.pos.x += -this.speed;
+
+        }
+        if (controlRight == true) {
+            this.pos.x += this.speed;
+        }
+    }
 
     // Hier Kollisionslogik mit Geschossen & Invaders einbauen
 
@@ -218,7 +241,7 @@ class Pong extends Scene{
 
 window.onload = ()=>{
     //add scenes here
-    let scenes = [new MainScene(), new LvlScene(),new Pong()];
+    let scenes = [new MainScene(), new LvlScene(),new Pong(), new SpaceInvaders()];
 
     wrapper = document.getElementById("wrapper");
     sceneLoader = new SceneLoader(scenes,wrapper);
@@ -250,6 +273,12 @@ document.onkeydown  = e =>{
         case " ":
             controlSpace = true;
         break;
+        case "a":
+            controlLeft = true;
+        break;
+        case "d":
+            controlRight = true;
+        break;
     }
 }
 
@@ -264,6 +293,12 @@ document.onkeyup  = e =>{
         break;
         case " ":
             controlSpace = false;
+        break;
+        case "a":
+            controlLeft = false;
+        break;
+        case "d":
+            controlRight = false;
         break;
     }
 }
