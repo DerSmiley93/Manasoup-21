@@ -4,11 +4,13 @@ let sceneIndex = 3;
 
 let controlUp = false;
 let controlDown = false;
+let controlLeft = false;
+let controlRight = false;
 let controlSpace = false;
 let controlLeft = false;
 let controlRight = false;
 
-
+//UI
 class MainScene extends Scene{
     //add html here
     dom = '<div class="mainMenue-wrapper">'+
@@ -21,7 +23,6 @@ class MainScene extends Scene{
         
     }
 }
-
 class LvlScene extends Scene{
     dom = '<div class="lvlMenue-wrapper">'+
     '<div class="lvlMenue-header">'+
@@ -89,7 +90,7 @@ class Cannon extends GameObject{
 }
 
 
-//pong
+//Pong
 class Paddle extends GameObject{
     center;
     isbot = false;
@@ -143,8 +144,8 @@ class Pong extends Scene{
     mainLoop = null
     ctx = null;
     canvas = null;
-    pad1 = new Paddle(new Vector2(0,0),new Vector2(15,120),new Vector2(0,0))
-    pad2 = new Paddle(new Vector2(0,0),new Vector2(15,120),new Vector2(0,0))
+    pad1 = new Paddle(new Vector2(0,0),new Vector2(15,120))
+    pad2 = new Paddle(new Vector2(0,0),new Vector2(15,120))
     ball = new Ball(new Vector2(0,0),new Vector2(15,15))
     score = new Vector2(0,0);
 
@@ -233,10 +234,139 @@ class Pong extends Scene{
 
     exit(){
         clearInterval(this.mainLoop);
-        sceneLoader.load(0);
+        sceneLoader.load(1);
     }
     
 
+}
+
+//Snake
+class Snake extends Scene{
+    dom = '<div class="pong-wrapper">'+
+    '<canvas id="canvas" width="600" height="600"></canvas> <p id="score" style="width:100px; margin: 10px; font-size:30px">Score:0</p>'+
+    '</div>';
+    points = null;
+    food = new Food(new Vector2(0,0),new Vector2(20,20));
+    snake = new SnakeBody(new Vector2(80,80),new Vector2(20,20));
+
+    gridScale = 20;
+    mainLoop = null;
+    canvas = null;
+    ctx = null;
+    main(){
+        this.points = document.getElementById("score");
+        this.canvas = document.getElementById("canvas");
+        this.ctx = this.canvas.getContext("2d");
+
+        this.food.pos = this.getNewFoodPos();
+        this.mainLoop = setInterval(() => {
+            this.update();
+            this.draw();
+        }, 100);
+    }
+
+    getNewFoodPos(){
+        let cols = Math.floor(this.canvas.width / this.gridScale);
+        let rows = Math.floor(this.canvas.height / this.gridScale);
+
+        let gridPos = new Vector2(Math.floor(Math.random() * cols),Math.floor(Math.random() * rows));
+
+        return new Vector2(gridPos.x * this.gridScale, gridPos.y * this.gridScale);
+    }
+
+    update(){
+        this.points.innerHTML = "Score:" + this.snake.tailLength;
+
+        this.snake.update(this.gridScale);
+        if(this.food.checkColision(this.snake)){
+            this.food.pos = this.getNewFoodPos();
+            this.snake.tailLength++;
+            this.snake.tail.push(new Vector2(this.snake.pos));
+        }
+        
+
+        if(this.snake.pos.x >= this.canvas.width){
+            this.snake.pos.x = 0;
+        }else if(this.snake.pos.x < 0){
+            this.snake.pos.x = this.canvas.width - this.gridScale;
+        }
+        if(this.snake.pos.y >= this.canvas.height){
+            this.snake.pos.y = 0;
+        }else if(this.snake.pos.y < 0){
+            this.snake.pos.y = this.canvas.height - this.gridScale;
+        }
+        
+        if(this.snake.tailLength > 19){
+            this.exit();
+        }
+    }
+
+    draw(){
+        this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+        this.snake.draw(this.ctx);
+        this.food.draw(this.ctx);
+    }
+
+    exit(){
+        clearInterval(this.mainLoop);
+        sceneLoader.load(1);
+    }
+}
+
+class Food extends GameObject{
+    
+    draw(ctx){
+        ctx.fillStyle = "red"
+        ctx.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y);
+    }
+}
+
+class SnakeBody extends GameObject{
+    dir = new Vector2(1,0);
+    tail = [];
+    tailLength = 0;
+
+    update(scale){
+        
+       
+
+        for(let i = 0; i < this.tailLength-1; i++){
+            this.tail[i] = this.tail[i+1];
+        }
+        this.tail[this.tailLength-1] = new Vector2(this.pos.x,this.pos.y);
+        
+        
+
+        this.pos.x += this.dir.x * scale;
+        this.pos.y += this.dir.y * scale;
+
+        for(let i = 0; i < this.tailLength; i++){
+            if(Vector2.distance(this.tail[i],this.pos) < 1){
+                this.tailLength = 0;
+                this.tail = [];
+                break;
+            }
+        }
+        
+
+        if(controlLeft && this.dir.x != 1){
+            this.dir = new Vector2(-1,0);
+        }else if(controlDown && this.dir.y != -1){
+            this.dir = new Vector2(0,1);
+        }else if(controlRight && this.dir.x != -1){
+            this.dir = new Vector2(1,0);
+        }else if(controlUp && this.dir.y != 1){
+            this.dir = new Vector2(0,-1);
+        }
+    }
+
+    draw(ctx){
+        ctx.fillStyle ="white"
+        ctx.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y);
+        for(let i = 0; i < this.tailLength; i++){
+            ctx.fillRect(this.tail[i].x,this.tail[i].y,20,20);
+        }
+    }
 }
 
 window.onload = ()=>{
@@ -270,6 +400,12 @@ document.onkeydown  = e =>{
         case "s":
             controlDown = true;
         break;
+        case "a":
+            controlLeft = true;
+        break;
+        case "d":
+            controlRight = true;
+        break;
         case " ":
             controlSpace = true;
         break;
@@ -286,11 +422,16 @@ document.onkeyup  = e =>{
     switch(e.key){
         case "w":
             controlUp = false;
-            
         break;
         case "s":
             controlDown = false;
         break;
+        case "a":
+            controlLeft = false;
+            break;
+        case "d":
+            controlRight = false;
+            break;
         case " ":
             controlSpace = false;
         break;
