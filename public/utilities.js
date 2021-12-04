@@ -25,6 +25,19 @@ class Vector2{
         this.x = x;
         this.y = y;
     }
+
+    normalize(){
+        let vectorLength = Math.sqrt((this.x * this.x)+(this.y * this.y));
+        let x_ = this.x / vectorLength;
+        let y_ = this.y / vectorLength;
+        return new Vector2(x_,y_);
+    }
+
+    static distance(a,b){
+        
+        return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y))
+        
+    }
 }
 
 

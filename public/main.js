@@ -6,6 +6,7 @@ let controlUp = false;
 let controlDown = false;
 let controlSpace = false;
 
+
 class MainScene extends Scene{
     //add html here
     dom = '<div class="mainMenue-wrapper">'+
@@ -65,10 +66,31 @@ class Cannon extends GameObject{
 }
 
 class Paddle extends GameObject{
-
+    center;
+    isbot = false;
+    speed = 5;
     update(ball){
+        this.center = new Vector2(this.pos.x + this.size.x / 2,this.pos.y + this.size.y / 2);
         if(this.checkColision(ball)){
+            ball.dir.x = -ball.dir.x
+            ball.dir.y = (ball.pos.y - this.center.y) / 50
+        }
 
+        if(controlUp && !this.isbot){
+            this.pos.y += -this.speed;
+        }else if(controlDown && !this.isbot){
+            this.pos.y += this.speed;
+        }
+
+        if(this.isbot){
+           if(ball.dir.x > 0 && ball.pos.x > 300){
+               if(ball.pos.y > this.pos.y + this.size.y / 2){
+                   this.pos.y += this.speed / 1.5;
+               }else if(ball.pos.y < this.pos.y + this.size.y / 2)
+               {
+                   this.pos.y += -this.speed / 1.5;
+               }
+           }
         }
     }
 
@@ -78,11 +100,11 @@ class Paddle extends GameObject{
 }
 
 class Ball extends GameObject{
-    vel = new Vector2(0,0)
-
+    vle = 7;
+    dir = new Vector2(0,0);
     update(){
-        this.pos.x += this.vel.x;
-        this.pos.y += this.vel.y;
+        this.pos.x += this.dir.normalize().x * this.vle;
+        this.pos.y += this.dir.normalize().y * this.vle;
     }
 
     draw(ctx){
@@ -98,18 +120,19 @@ class Pong extends Scene{
     mainLoop = null
     ctx = null;
     canvas = null;
-    pad1 = new Paddle(new Vector2(0,0),new Vector2(20,120),new Vector2(0,0))
-    pad2 = new Paddle(new Vector2(0,0),new Vector2(20,120),new Vector2(0,0))
-    ball = new Ball(new Vector2(0,0),new Vector2(10,10))
+    pad1 = new Paddle(new Vector2(0,0),new Vector2(15,120),new Vector2(0,0))
+    pad2 = new Paddle(new Vector2(0,0),new Vector2(15,120),new Vector2(0,0))
+    ball = new Ball(new Vector2(0,0),new Vector2(15,15))
 
     main(){
         this.canvas = document.getElementById("canvas");
         this.ctx = canvas.getContext("2d");
         this.ctx.fillStyle = "white"
         
-        this.pad1.pos = new Vector2(10,(this.canvas.height / 2) - this.pad1.size.y / 2)
-        this.pad2.pos = new Vector2(this.canvas.width - this.pad2.size.x - 10,(this.canvas.height / 2) - this.pad1.size.y / 2)
-        this.resetBall()
+        
+        this.pad2.isbot = true;
+        
+        this.reset()
 
         this.mainLoop = setInterval(()=>{
             this.update();
@@ -122,6 +145,29 @@ class Pong extends Scene{
         this.pad1.update(this.ball);
         this.pad2.update(this.ball)
         this.ball.update();
+
+        if(this.ball.pos.y + this.ball.size.y >= this.canvas.height || this.ball.pos.y <= 0){
+            this.ball.dir.y = -this.ball.dir.y
+        }
+
+        if(this.ball.pos.x < 0){
+            this.reset();
+        }
+        if(this.ball.pos.x + this.ball.size.x > this.canvas.width){
+            this.reset();
+        }
+
+        if(this.pad1.pos.y < 0){
+            this.pad1.pos.y = 0;
+        }else if(this.pad1.pos.y > this.canvas.height - this.pad1.size.y){
+            this.pad1.pos.y = this.canvas.height - this.pad1.size.y
+        }
+
+        if(this.pad2.pos.y < 0){
+            this.pad2.pos.y = 0;
+        }else if(this.pad2.pos.y > this.canvas.height - this.pad2.size.y){
+            this.pad2.pos.y = this.canvas.height - this.pad2.size.y
+        }
     }
 
     draw(){
@@ -131,8 +177,19 @@ class Pong extends Scene{
         this.ball.draw(this.ctx);
     }
 
-    resetBall(){
-        this.ball.pos = new Vector2(this.canvas.width / 2 - this.ball.size.x / 2,this.canvas.height / 2 - this.ball.size.y / 2)
+    reset(){
+        this.ball.pos = new Vector2(this.canvas.width / 2 - this.ball.size.x / 2,this.canvas.height / 2 - this.ball.size.y / 2);
+        this.pad1.pos = new Vector2(10,(this.canvas.height / 2) - this.pad1.size.y / 2);
+        this.pad2.pos = new Vector2(this.canvas.width - this.pad2.size.x - 10,(this.canvas.height / 2) - this.pad1.size.y / 2);
+
+        let x = 0;
+        if(Math.random() > 0.5){
+            x = 1;
+        }else{
+            x = -1
+        }
+
+        this.ball.dir = new Vector2(x,Math.random() * 2 - 1);
     }
 
     exit(){
@@ -173,6 +230,9 @@ document.onkeydown  = e =>{
         case "s":
             controlDown = true;
         break;
+        case " ":
+            controlSpace = true;
+        break;
     }
 }
 
@@ -184,6 +244,9 @@ document.onkeyup  = e =>{
         break;
         case "s":
             controlDown = false;
-            break;
+        break;
+        case " ":
+            controlSpace = false;
+        break;
     }
 }
