@@ -26,6 +26,14 @@ class LvlScene extends Scene{
 
     }
 }
+class SpaceInvaders extends Scene {
+    dom = "";
+
+    main(){
+
+
+    }
+}
 
 window.onload = ()=>{
     //add scenes here
