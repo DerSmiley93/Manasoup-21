@@ -45,9 +45,13 @@ body{
     width: 100%;
     height: 100%;
     display: flex;
+    flex-direction: column;
 }
 
 .lvlMenue-header{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
     border-bottom: solid white 2px;
     width: 100%;
     height: 50px;
@@ -76,4 +80,15 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#games{
+    display: flex;
+    justify-content: space-around;
+}
+
+.lvlImg{
+    width: 200px;
+    height: 200px;
+    border: solid white 2px;
 }
