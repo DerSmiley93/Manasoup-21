@@ -85,6 +85,7 @@ class Bullet extends GameObject{
 }
 class Cannon extends GameObject{
     speed = 6;
+    hasShot = false;
     update(bullets){
 
         if(controlLeft == true){
@@ -95,10 +96,15 @@ class Cannon extends GameObject{
             this.pos.x += this.speed;
         }
 
-        if(controlSpace){
+        if(controlSpace && !this.hasShot){
             bullets.push(new Bullet(new Vector2(this.pos.x + this.size.x / 2,this.pos.y),new Vector2(5,20)));
             console.log(bullets);
-            controlSpace = false;
+            //controlSpace = false;
+            this.hasShot = true;
+        }
+
+        if (!controlSpace && this.hasShot) {
+            this.hasShot = false;
         }
         
         
