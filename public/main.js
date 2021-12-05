@@ -1,5 +1,8 @@
 let sceneLoader = new SceneLoader([],document.body)
-games = [{name:"Pong", img:"imgs/Pong.PNG",id:0, locked:false},{name:"Snake", img: "imgs/snake_thumbnail_2.png", id:1,locked: false},{name:"Space Invaders", img: "imgs/space_invaders_thumbnail_2.png" ,id:2, locked:false}];
+
+
+games = [{name:"Pong", img:"imgs/Pong.PNG",id:0, locked:false},{name:"Snake", img: "imgs/snake_thumbnail_2.png", id:1,locked:true},{name:"Space Invaders", img: "imgs/space_invaders_thumbnail_2.png" ,id:2, locked:false}];
+
 
 //debugging variable
 let sceneIndex = 0;
@@ -47,6 +50,7 @@ class LvlScene extends Scene{
     }
 }
 
+//Space invaders
 class Barier extends GameObject{
     hp = 10;
 
@@ -56,12 +60,9 @@ class Barier extends GameObject{
         ctx.fillStyle = "white"
     }
 }
-
 class Ray extends GameObject{
 
 }
-
-//Space invaders
 class Invader extends GameObject{
     speed = 1; // Ggf. andere Forbewegungsmethode einbauen!
     ray = null;
@@ -173,7 +174,11 @@ class SpaceInvaders extends Scene {
         this.playerBullets.forEach(b => b.pos.y -= 10);
         this.invaderBullets.forEach(b => b.pos.y += 10);
 
-        
+        if(this.player.pos.x < 0){
+            this.player.pos.x = 0;
+        }else if(this.player.pos.x > this.canvas.width - this.player.size.x ){
+            this.player.pos.x = this.canvas.width - this.player.size.x;
+        }
 
         for(let i = 0; i < this.invaderBullets.length; i++){
             if(this.invaderBullets[i].checkColision(this.player)){
@@ -284,6 +289,16 @@ class SpaceInvaders extends Scene {
                 break;
             }
         }
+
+        this.invaders.forEach(invader => {
+            if(invader.pos.y > this.canvas.width - 250){
+                this.reset();
+            }
+        })
+
+        if(this.invaders.length == 0){
+            exit();
+        }
     }
 
     reset(){
@@ -293,6 +308,9 @@ class SpaceInvaders extends Scene {
         this.playerHP = 3;
         this.bariers = []
         let bariersOffset = this.canvas.width / this.bariersRows;
+        this.invaderSpeed = new Vector2(0.1,10);
+        this.invaderDir = new Vector2(1,0);
+        this.goseRight = true;
         for(let i = 0; i < this.bariersRows; i++){
             this.bariers.push(new Barier(new Vector2(bariersOffset * i + 80,this.canvas.height - 150),new Vector2(50,50)))
         }
@@ -301,6 +319,12 @@ class SpaceInvaders extends Scene {
                 this.invaders.push(new Invader(new Vector2(invaderOffset.x * x,invaderOffset.y * y + 25),new Vector2(30,30)))
             }
         }
+    }
+
+    exit(){
+        this.reset();
+        clearInterval(this.mainLoop);
+        sceneLoader.load(1);
     }
 
     draw(){
@@ -480,7 +504,8 @@ class Pong extends Scene{
 
 //Snake
 class Snake extends Scene{
-    dom = '<div class="pong-wrapper"><h2 class="game_title">Snake (Based on Blockade from 1976, originally developed and published by Gremlin Industries)</h2>'+
+
+    dom = '<div class="snake-wrapper"><h2 class="game_title">Snake (Based on Blockade from 1976, originally developed and published by Gremlin Industries)</h2>'+
     '<canvas id="canvas" width="600" height="600"></canvas> <p id="score" style="width:100px; margin: 10px; font-size:30px">Score:0</p>'+
     '</div>';
     points = null;
@@ -566,10 +591,10 @@ class Snake extends Scene{
         this.snake.tailLength = 0;
         this.snake.tail = [];
         clearInterval(this.mainLoop);
+        games[2].locked = false;
         sceneLoader.load(1);
     }
 }
-
 class Food extends GameObject{
     
     draw(ctx){
@@ -577,7 +602,6 @@ class Food extends GameObject{
         ctx.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y);
     }
 }
-
 class SnakeBody extends GameObject{
     dir = new Vector2(1,0);
     tail = [];
