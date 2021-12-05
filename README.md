@@ -1,4 +1,4 @@
-# need to install nodejs to runn server;
+# need to install nodejs to run server;
 # to install packages type: $npm i
 # start server: $npm run dev:server;
-# addres is localhost:3000
+# address is localhost:3000
