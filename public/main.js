@@ -99,14 +99,17 @@ class SpaceInvaders extends Scene {
     ctx = null;
     canvas = null;
 
-    player = new Cannon(new Vector2(30, 80), new Vector2(15,15));
+    player = new Cannon(new Vector2(450, 650), new Vector2(15,15));
     test_invader = new Invader(new Vector2(30, 10), new Vector2(20, 20));
+    //test_invader2 = new Invader(new Vector2(30, 300), new Vector2(20, 20));
+    //test_invader3 = new Invader(new Vector2(30, 600), new Vector2(20, 20));
+    invaders = [new Invader(new Vector2(30, 10), new Vector2(20, 20)), new Invader(new Vector2(30, 300), new Vector2(20, 20)), new Invader(new Vector2(30, 600), new Vector2(20, 20))];
+
+
     main(){
         this.canvas = document.getElementById("canvas");
         this.ctx = canvas.getContext("2d");
         this.ctx.fillStyle = "white";
-
-        this.reset();
 
         this.mainLoop = setInterval(()=>{
             this.update();
@@ -117,10 +120,6 @@ class SpaceInvaders extends Scene {
     }
 
     update(){
-
-    }
-
-    reset(){
 
     }
 
