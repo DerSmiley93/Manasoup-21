@@ -139,22 +139,15 @@ class SpaceInvaders extends Scene {
     cols = 5;
     rows = 11;
 
-    player = new Cannon(new Vector2(30, 80), new Vector2(15,15));
-
     main(){
+        
         this.canvas = document.getElementById("canvas");
         this.ctx = canvas.getContext("2d");
         this.ctx.fillStyle = "white";
-
-        
-
-        
-
-       
-
+        this.reset();
         console.log(this.invaders)
 
-        this.reset();
+        
 
         this.mainLoop = setInterval(()=>{
             this.update();
@@ -167,6 +160,14 @@ class SpaceInvaders extends Scene {
         this.player.update(this.playerBullets);
         this.playerBullets.forEach(b => b.pos.y -= 10);
         this.invaderBullets.forEach(b => b.pos.y += 10);
+
+        for(let i = 0; i < this.invaderBullets.length; i++){
+            if(this.invaderBullets[i].checkColision(this.player)){
+                this.invaderBullets.splice(i,1);
+                this.playerHP--;
+            }
+        }
+
         if(this.playerHP == 0){
             this.reset();
         }
@@ -247,8 +248,9 @@ class SpaceInvaders extends Scene {
     }
 
     reset(){
-        this.player = new Cannon(new Vector2(30, this.canvas.height - this.player.size.y), new Vector2(30,30));
+        this.player = new Cannon(new Vector2(30, this.canvas.height - 30), new Vector2(30,30));
         let invaderOffset = new Vector2((this.canvas.width - 50) / this.rows,(this.canvas.height -300) / this.cols);
+        this.invaders = [];
         this.playerHP = 3;
         for(let x = 0; x < this.rows; x++){
             for(let y = 0; y < this.cols; y++){
@@ -519,6 +521,7 @@ class Snake extends Scene{
         sceneLoader.load(1);
     }
 }
+
 class Food extends GameObject{
     
     draw(ctx){
@@ -526,6 +529,7 @@ class Food extends GameObject{
         ctx.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y);
     }
 }
+
 class SnakeBody extends GameObject{
     dir = new Vector2(1,0);
     tail = [];
