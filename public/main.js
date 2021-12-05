@@ -15,7 +15,7 @@ class MainScene extends Scene{
     //add html here
     dom = '<div class="mainMenue-wrapper">'+
     '<h1 class="title">Es War Einmal...</h1>'+
-    '<button onclick="play()" class="mainMenue-button">Play</button>'+
+    '<button onclick="play()" class="mainMenue-button">Play</button><p>Developed for ManaSoup 2021, December 4th-6th by Phillip Hecker (DerSmiley93) & Apokalypto</p>'+
     '</div>';
 
     //scene code
@@ -92,9 +92,6 @@ class Bullet extends GameObject{
         ctx.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y)
         ctx.fillStyle = "white"
     }
-    //Form: Quadrat oder rechteck, klein
-    //Flugbahn: Linear
-    //Logik: TODO
 
 }
 class Cannon extends GameObject{
@@ -128,12 +125,10 @@ class Cannon extends GameObject{
         
     }
 
-    // Hier Kollisionslogik mit Geschossen & Invaders einbauen
-
 
 }
 class SpaceInvaders extends Scene {
-    dom = '<div class="spaceInvaders-wrapper">'+
+    dom = '<div class="spaceInvaders-wrapper"><h2 class="game_title">Space Invaders (Released in 1978, developed by Tomohiro Nishikadi, published by Taito)</h2>'+
     '<canvas id="canvas" width="900" height="700"></canvas>'+
     '</div>';
 
@@ -373,7 +368,7 @@ class Ball extends GameObject{
     }
 }
 class Pong extends Scene{
-    dom = '<div class="pong-wrapper">'+
+    dom = '<div class="pong-wrapper"><h2 class="game_title">Pong (Released in 1972, Designed by Allan Alcom, Published by Atari)</h2>'+
     '<canvas id="canvas" width="900" height="700"></canvas>'+
     '</div>';
 
@@ -485,7 +480,7 @@ class Pong extends Scene{
 
 //Snake
 class Snake extends Scene{
-    dom = '<div class="pong-wrapper">'+
+    dom = '<div class="pong-wrapper"><h2 class="game_title">Snake (Based on Blockade from 1976, originally developed and published by Gremlin Industries)</h2>'+
     '<canvas id="canvas" width="600" height="600"></canvas> <p id="score" style="width:100px; margin: 10px; font-size:30px">Score:0</p>'+
     '</div>';
     points = null;
