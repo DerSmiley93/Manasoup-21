@@ -1,6 +1,7 @@
 let sceneLoader = new SceneLoader([],document.body)
+games = [{name:"Pong", img:"imgs/Pong.png",id:0, locked:false},{name:"Snake",id:1,locked:true},{name:"Space Invaders",id:2, locked:true}];
 //debugging variable
-let sceneIndex = 4;
+let sceneIndex = 0;
 
 let controlUp = false;
 let controlDown = false;
@@ -26,15 +27,26 @@ class LvlScene extends Scene{
     '<div class="lvlMenue-header">'+
     '<p class="material-icons" onclick="goBack()">exit_to_app</p>'+
     '</div>'+
+    '<div id="games">'+
+
+    '</div>'+
     '</div>';
-
+   
     main(){
+        let gameList = document.getElementById("games");
 
+        for(let i = 0; i < games.length; i++){
+            if(games[i].locked){
+                gameList.innerHTML += '<div class="lvlButon"><p>'+games[i].name +'</p> <img src="'+games[i].img +'" class="lvlImg"></div>'
+            }else{
+                gameList.innerHTML += '<div onclick="pickLvl('+games[i].id+')" class="lvlButon"><p>'+games[i].name +'</p> <img src="'+games[i].img +'" class="lvlImg"></div>'
+            }
+                
+        }
     }
 }
 
-
-
+//Space invaders
 class Invader extends GameObject{
     speed = 1; // Ggf. andere Forbewegungsmethode einbauen!
     
@@ -66,10 +78,7 @@ class Bullet extends GameObject{
 }
 class Cannon extends GameObject{
     speed = 6;
-    update(bullet){
-        if(this.checkColision(bullet)) {
-            this.speed = 6; // Platzhalter für Zerstörungsfunktion
-        }
+    update(){
 
         if(controlLeft == true){
             this.pos.x += -this.speed;
@@ -88,8 +97,6 @@ class Cannon extends GameObject{
 
 
 }
-
-//Space invaders
 class SpaceInvaders extends Scene {
     dom = '<div class="spaceInvaders-wrapper">'+
     '<canvas id="canvas" width="900" height="700"></canvas>'+
@@ -99,12 +106,18 @@ class SpaceInvaders extends Scene {
     ctx = null;
     canvas = null;
 
+    Invaders = [];
+
     player = new Cannon(new Vector2(30, 80), new Vector2(15,15));
     test_invader = new Invader(new Vector2(30, 10), new Vector2(20, 20));
     main(){
         this.canvas = document.getElementById("canvas");
         this.ctx = canvas.getContext("2d");
         this.ctx.fillStyle = "white";
+
+        for(let i = 0; i < 10; i++){
+            this.Invaders.push(new Invader(new Vector2(20 * i,20),new Vector2(10,10)));
+        }
 
         this.reset();
 
@@ -113,20 +126,30 @@ class SpaceInvaders extends Scene {
             this.draw();
         },16)
 
-
     }
 
     update(){
+        this.player.update();
+        this.test_invader.update();
 
+        this.Invaders.forEach(invader => {
+            invader.update();
+        });
     }
 
     reset(){
-
+        this.player = new Cannon(new Vector2(30, 80), new Vector2(15,15));
+        this.test_invader = new Invader(new Vector2(30, 10), new Vector2(20, 20));
     }
 
     draw(){
+        this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
         this.player.draw(this.ctx);
         this.test_invader.draw(this.ctx);
+        
+        this.Invaders.forEach(invader => {
+            invader.draw(this.ctx);
+        });
     }
 }
 
@@ -139,6 +162,7 @@ class Paddle extends GameObject{
         this.center = new Vector2(this.pos.x + this.size.x / 2,this.pos.y + this.size.y / 2);
         if(this.checkColision(ball)){
             ball.dir.x = -ball.dir.x
+            ball.pos.x += ball.dir.x * 8;
             ball.dir.y = (ball.pos.y - this.center.y) / 50
         }
 
@@ -212,6 +236,12 @@ class Pong extends Scene{
         this.ball.update();
 
         if(this.ball.pos.y + this.ball.size.y >= this.canvas.height || this.ball.pos.y <= 0){
+            if(this.ball.pos.y < 0){
+                this.ball.pos.y = 0;
+            }
+            if(this.ball.pos.y + this.ball.size.y > this.canvas.height){
+                this.ball.pos.y = this.canvas.height - this.ball.size.y;
+            }
             this.ball.dir.y = -this.ball.dir.y
         }
 
@@ -229,9 +259,8 @@ class Pong extends Scene{
         }
         
         if(this.score.x == 10){
-            this.score.x == 0
-            this.score.y == 0;
-            this.reset();
+            this.score.x = 0;
+            this.score.y = 0;
         }
 
         if(this.pad1.pos.y < 0){
@@ -274,7 +303,9 @@ class Pong extends Scene{
 
     exit(){
         clearInterval(this.mainLoop);
+        games[1].locked = false;
         sceneLoader.load(1);
+        
     }
     
 
@@ -336,7 +367,7 @@ class Snake extends Scene{
             this.snake.pos.y = this.canvas.height - this.gridScale;
         }
         
-        if(this.snake.tailLength > 19){
+        if(this.snake.tailLength == 30){
             this.exit();
         }
     }
@@ -348,6 +379,8 @@ class Snake extends Scene{
     }
 
     exit(){
+        this.snake.tailLength = 0;
+        this.snake.tail = [];
         clearInterval(this.mainLoop);
         sceneLoader.load(1);
     }
@@ -427,9 +460,8 @@ function goBack(){
 }
 
 function pickLvl(id){
-    screen.load(id + 2)
+    sceneLoader.load(id + 2)
 }
-
 
 document.onkeydown  = e =>{
     switch(e.key){
