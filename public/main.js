@@ -1,7 +1,7 @@
 let sceneLoader = new SceneLoader([],document.body)
 games = [{name:"Pong", img:"imgs/Pong.png",id:0, locked:false},{name:"Snake",id:1,locked:true},{name:"Space Invaders",id:2, locked:true}];
 //debugging variable
-let sceneIndex = 0;
+let sceneIndex = 3;
 
 let controlUp = false;
 let controlDown = false;
@@ -106,13 +106,9 @@ class SpaceInvaders extends Scene {
     ctx = null;
     canvas = null;
 
-<<<<<<< HEAD
-    player = new Cannon(new Vector2(450, 650), new Vector2(15,15));
-=======
     Invaders = [];
 
     player = new Cannon(new Vector2(30, 80), new Vector2(15,15));
->>>>>>> c364cec5ab108e9b1e8170ee0d197699be7ff31c
     test_invader = new Invader(new Vector2(30, 10), new Vector2(20, 20));
     //test_invader2 = new Invader(new Vector2(30, 300), new Vector2(20, 20));
     //test_invader3 = new Invader(new Vector2(30, 600), new Vector2(20, 20));
@@ -124,15 +120,12 @@ class SpaceInvaders extends Scene {
         this.ctx = canvas.getContext("2d");
         this.ctx.fillStyle = "white";
 
-<<<<<<< HEAD
-=======
         for(let i = 0; i < 10; i++){
             this.Invaders.push(new Invader(new Vector2(20 * i,20),new Vector2(10,10)));
         }
 
         this.reset();
 
->>>>>>> c364cec5ab108e9b1e8170ee0d197699be7ff31c
         this.mainLoop = setInterval(()=>{
             this.update();
             this.draw();
@@ -149,14 +142,11 @@ class SpaceInvaders extends Scene {
         });
     }
 
-<<<<<<< HEAD
-=======
     reset(){
         this.player = new Cannon(new Vector2(30, 80), new Vector2(15,15));
         this.test_invader = new Invader(new Vector2(30, 10), new Vector2(20, 20));
     }
 
->>>>>>> c364cec5ab108e9b1e8170ee0d197699be7ff31c
     draw(){
         this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
         this.player.draw(this.ctx);
@@ -495,10 +485,16 @@ document.onkeydown  = e =>{
         case " ":
             controlSpace = true;
         break;
-        case "a":
+        case "ArrowUp":
+            controlUp = true;
+        break;
+        case "ArrowDown":
+            controlDown = true;
+        break;
+        case "ArrowLeft":
             controlLeft = true;
         break;
-        case "d":
+        case "ArrowRight":
             controlRight = true;
         break;
     }
@@ -521,11 +517,17 @@ document.onkeyup  = e =>{
         case " ":
             controlSpace = false;
         break;
-        case "a":
+        case "ArrowUp":
+            controlUp = false;
+        break;
+        case "ArrowDown":
+            controlDown = false;
+        break;
+        case "ArrowLeft":
             controlLeft = false;
-        break;
-        case "d":
+            break;
+        case "ArrowRight":
             controlRight = false;
-        break;
+            break;
     }
 }
