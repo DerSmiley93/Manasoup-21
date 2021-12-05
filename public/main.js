@@ -366,9 +366,12 @@ class Snake extends Scene{
         this.snake.update(this.gridScale);
         if(this.food.checkColision(this.snake)){
             var nextFood = this.getNewFoodPos();
-            while (this.arrayMinDistance(nextFood, this.snake.tail) >= 1*this.gridScale) {
-                nextFood = this.getNewFoodPos();
+            if (this.snake.tailLength != 0) {
+                while (this.arrayMinDistance(nextFood, this.snake.tail)*this.gridScale <= 1*this.gridScale) {
+                    nextFood = this.getNewFoodPos();
+                }
             }
+
             this.food.pos = nextFood;
             this.snake.tailLength++;
             this.snake.tail.push(new Vector2(this.snake.pos));
@@ -386,7 +389,7 @@ class Snake extends Scene{
             this.snake.pos.y = this.canvas.height - this.gridScale;
         }
         
-        if(this.snake.tailLength == 30){
+        if(this.snake.tailLength == 300){
             this.exit();
         }
     }
