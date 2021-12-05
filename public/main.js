@@ -297,7 +297,7 @@ class SpaceInvaders extends Scene {
         })
 
         if(this.invaders.length == 0){
-            exit();
+            this.exit();
         }
     }
 
