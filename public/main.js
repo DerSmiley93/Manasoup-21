@@ -1,5 +1,5 @@
 let sceneLoader = new SceneLoader([],document.body)
-games = [{name:"Pong", img:"imgs/Pong.png",id:0, locked:false},{name:"Snake",id:1,locked:true},{name:"Space Invaders",id:2, locked:true}];
+games = [{name:"Pong", img:"imgs/Pong.png",id:0, locked:false},{name:"Snake",id:1,locked: false},{name:"Space Invaders",id:2, locked:false}];
 //debugging variable
 let sceneIndex = 0;
 
@@ -46,13 +46,21 @@ class LvlScene extends Scene{
     }
 }
 
+class Ray extends GameObject{
+
+}
+
 //Space invaders
 class Invader extends GameObject{
     speed = 1; // Ggf. andere Forbewegungsmethode einbauen!
-    
+    ray = null;
+    canShoot = false;
     //Hier Kollisionslogik mit Geschossen einbauen
-    update(){
-
+    update(bullets){
+        this.ray = new Ray(new Vector2(this.pos.x,this.pos.y),new Vector2(5,1000));
+        if(this.canShoot && Math.random() > 0.99){
+            bullets.push(new Bullet(new Vector2(this.pos.x + this.size.x / 2,this.pos.y + this.size.y),new Vector2(5,20)));
+        }
     }
 
     draw(ctx){
@@ -65,7 +73,6 @@ class Bullet extends GameObject{
 
 
     update(){
-
     }
 
     draw(ctx){
@@ -78,7 +85,7 @@ class Bullet extends GameObject{
 }
 class Cannon extends GameObject{
     speed = 6;
-    update(){
+    update(bullets){
 
         if(controlLeft == true){
             this.pos.x += -this.speed;
@@ -87,6 +94,14 @@ class Cannon extends GameObject{
         if (controlRight == true) {
             this.pos.x += this.speed;
         }
+
+        if(controlSpace){
+            bullets.push(new Bullet(new Vector2(this.pos.x + this.size.x / 2,this.pos.y),new Vector2(5,20)));
+            console.log(bullets);
+            controlSpace = false;
+        }
+        
+        
     }
 
     draw(ctx){
@@ -106,23 +121,32 @@ class SpaceInvaders extends Scene {
     ctx = null;
     canvas = null;
 
-    Invaders = [];
+    playerHP = 3;
+
+    playerBullets = [];
+    invaderBullets = [];
+
+    invaders = [];
+    goseRight = true;
+    invaderSpeed = new Vector2(0.1,10);
+    invaderDir = new Vector2(1,0);
+    cols = 5;
+    rows = 11;
 
     player = new Cannon(new Vector2(30, 80), new Vector2(15,15));
-    test_invader = new Invader(new Vector2(30, 10), new Vector2(20, 20));
-    //test_invader2 = new Invader(new Vector2(30, 300), new Vector2(20, 20));
-    //test_invader3 = new Invader(new Vector2(30, 600), new Vector2(20, 20));
-    invaders = [new Invader(new Vector2(30, 10), new Vector2(20, 20)), new Invader(new Vector2(30, 300), new Vector2(20, 20)), new Invader(new Vector2(30, 600), new Vector2(20, 20))];
-
 
     main(){
         this.canvas = document.getElementById("canvas");
         this.ctx = canvas.getContext("2d");
         this.ctx.fillStyle = "white";
 
-        for(let i = 0; i < 10; i++){
-            this.Invaders.push(new Invader(new Vector2(20 * i,20),new Vector2(10,10)));
-        }
+        
+
+        
+
+       
+
+        console.log(this.invaders)
 
         this.reset();
 
@@ -134,27 +158,109 @@ class SpaceInvaders extends Scene {
     }
 
     update(){
-        this.player.update();
-        this.test_invader.update();
+        this.player.update(this.playerBullets);
+        this.playerBullets.forEach(b => b.pos.y -= 10);
+        this.invaderBullets.forEach(b => b.pos.y += 10);
+        if(this.playerHP == 0){
+            this.reset();
+        }
+        for(let i = 0; i < this.playerBullets.length; i++){
+            if(this.playerBullets[i].pos.y + this.playerBullets[i].size.y < 0){
+                this.playerBullets.splice(i,1);
+            }
+        }
+        for(let i = 0; i < this.invaderBullets.length; i++){
+            if(this.invaderBullets[i].pos.y  > this.canvas.height){
+                this.invaderBullets.splice(i,1);
+            }
+        }
+        
+        this.handleInvaders();
+        
+    }
 
-        this.Invaders.forEach(invader => {
-            invader.update();
-        });
+    handleInvaders(){
+        this.invaders.forEach(inv => inv.update(this.invaderBullets));
+
+        for(let i = 0; i < this.playerBullets.length; i++){
+            for(let j = 0; j < this.invaders.length; j++){
+                if(this.playerBullets[i].checkColision(this.invaders[j])){
+                    this.invaders.splice(j,1);
+                    this.playerBullets.splice(i,1);
+                    if(this.invaders.length < this.cols * this.rows / 2){
+                        this.invaderSpeed.x += 0.2;
+                    }
+                    break;
+                }
+            }
+        }
+
+        for(let i = 0; i < this.invaders.length; i++){
+            for(let j = 0; j < this.invaders.length; j++){
+                if(this.invaders[i] !== this.invaders[j]){
+                    if(this.invaders[i].ray.checkColision(this.invaders[j])){
+                        this.invaders[i].canShoot = false;
+                        break;
+                    }else{
+                        this.invaders[i].canShoot = true;
+                    }
+                }
+            }
+        }
+
+        for(let i = 0; i < this.invaders.length; i++){
+            this.invaders[i].pos.x += this.invaderDir.x * this.invaderSpeed.x;
+            this.invaders[i].pos.y += this.invaderDir.y * this.invaderSpeed.y;
+            
+        }
+
+        if(this.invaderDir.y == 1 && this.goseRight){
+            this.invaderDir = new Vector2(-1,0);
+            this.goseRight = false;
+            for(let i = 0; i < this.invaders.length; i++){
+                this.invaders[i].pos.x -= this.invaderSpeed.x;
+            }
+        }else if(this.invaderDir.y == 1 && !this.goseRight){
+            this.invaderDir = new Vector2(1,0);
+            this.goseRight = true;
+            for(let i = 0; i < this.invaders.length; i++){
+                this.invaders[i].pos.x += this.invaderSpeed.x;
+            }
+        }
+
+        for(let i = 0; i < this.invaders.length; i++){
+            if(this.invaders[i].pos.x + this.invaders[i].size.x > this.canvas.width){
+                this.invaderDir = new Vector2(0,1);
+                break;
+            }
+            if(this.invaders[i].pos.x < 0){
+                this.invaderDir = new Vector2(0,1);
+                break;
+            }
+        }
     }
 
     reset(){
-        this.player = new Cannon(new Vector2(30, 80), new Vector2(15,15));
-        this.test_invader = new Invader(new Vector2(30, 10), new Vector2(20, 20));
+        this.player = new Cannon(new Vector2(30, this.canvas.height - this.player.size.y), new Vector2(30,30));
+        let invaderOffset = new Vector2((this.canvas.width - 50) / this.rows,(this.canvas.height -300) / this.cols);
+        this.playerHP = 3;
+        for(let x = 0; x < this.rows; x++){
+            for(let y = 0; y < this.cols; y++){
+                this.invaders.push(new Invader(new Vector2(invaderOffset.x * x,invaderOffset.y * y + 25),new Vector2(30,30)))
+            }
+        }
     }
 
     draw(){
         this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)
         this.player.draw(this.ctx);
-        this.test_invader.draw(this.ctx);
         
-        this.Invaders.forEach(invader => {
+        this.invaders.forEach(invader => {
             invader.draw(this.ctx);
         });
+
+        this.playerBullets.forEach(b => b.draw(this.ctx))
+        this.invaderBullets.forEach(b => b.draw(this.ctx))
     }
 }
 
