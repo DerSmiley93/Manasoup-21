@@ -1,7 +1,7 @@
 let sceneLoader = new SceneLoader([],document.body)
 games = [{name:"Pong", img:"imgs/Pong.png",id:0, locked:false},{name:"Snake",id:1,locked:true},{name:"Space Invaders",id:2, locked:true}];
 //debugging variable
-let sceneIndex = 3;
+let sceneIndex = 0;
 
 let controlUp = false;
 let controlDown = false;
@@ -389,7 +389,7 @@ class Snake extends Scene{
             this.snake.pos.y = this.canvas.height - this.gridScale;
         }
         
-        if(this.snake.tailLength == 300){
+        if(this.snake.tailLength == 30){
             this.exit();
         }
     }
