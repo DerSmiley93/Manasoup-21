@@ -18,7 +18,7 @@ class MainScene extends Scene{
     //add html here
     dom = '<div class="mainMenue-wrapper">'+
     '<h1 class="title">Es War Einmal...</h1>'+
-    '<button onclick="play()" class="mainMenue-button">Play</button><p>Developed for ManaSoup 2021, December 4th-6th by Phillip Hecker (DerSmiley93) & Apokalypto</p>'+
+    '<button onclick="play()" class="mainMenue-button">Play</button><p>Developed for ManaSoup 2021, December 4th-6th by DerSmiley93 & Apokalypto (aka LoopZoop)</p>'+
     '</div>';
 
     //scene code
