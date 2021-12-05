@@ -1,5 +1,5 @@
 let sceneLoader = new SceneLoader([],document.body)
-games = [{name:"Pong", img:"imgs/Pong.PNG",id:0, locked:false},{name:"Snake", img: "imgs/snake_thumbnail_2.png", id:1,locked: false},{name:"Space Invaders", img: "imgs/space_invaders_thumbnail.png" ,id:2, locked:false}];
+games = [{name:"Pong", img:"imgs/Pong.PNG",id:0, locked:false},{name:"Snake", img: "imgs/snake_thumbnail_2.png", id:1,locked: false},{name:"Space Invaders", img: "imgs/space_invaders_thumbnail_2.png" ,id:2, locked:false}];
 
 //debugging variable
 let sceneIndex = 0;
