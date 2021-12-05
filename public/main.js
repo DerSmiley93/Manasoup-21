@@ -358,6 +358,7 @@ class Snake extends Scene{
             }
             
         }
+        return currentMin;
     }
     update(){
         this.points.innerHTML = "Score:" + this.snake.tailLength;
@@ -365,7 +366,7 @@ class Snake extends Scene{
         this.snake.update(this.gridScale);
         if(this.food.checkColision(this.snake)){
             var nextFood = this.getNewFoodPos();
-            while (this.arrayMinDistance(nextFood, this.snake.tail) >= 1) {
+            while (this.arrayMinDistance(nextFood, this.snake.tail) >= 1*this.gridScale) {
                 nextFood = this.getNewFoodPos();
             }
             this.food.pos = nextFood;
