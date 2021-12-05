@@ -1,5 +1,6 @@
 let sceneLoader = new SceneLoader([],document.body)
 games = [{name:"Pong", img:"imgs/Pong.PNG",id:0, locked:false},{name:"Snake", img: "imgs/snake_thumbnail_2.png", id:1,locked: false},{name:"Space Invaders", img: "imgs/space_invaders_thumbnail.png" ,id:2, locked:false}];
+
 //debugging variable
 let sceneIndex = 0;
 
@@ -46,6 +47,16 @@ class LvlScene extends Scene{
     }
 }
 
+class Barier extends GameObject{
+    hp = 10;
+
+    draw(ctx){
+        ctx.fillStyle = "blue"
+        ctx.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y);
+        ctx.fillStyle = "white"
+    }
+}
+
 class Ray extends GameObject{
 
 }
@@ -58,25 +69,28 @@ class Invader extends GameObject{
     //Hier Kollisionslogik mit Geschossen einbauen
     update(bullets){
         this.ray = new Ray(new Vector2(this.pos.x,this.pos.y),new Vector2(5,1000));
-        if(this.canShoot && Math.random() > 0.99){
+        if(this.canShoot && Math.random() > 0.995){
             bullets.push(new Bullet(new Vector2(this.pos.x + this.size.x / 2,this.pos.y + this.size.y),new Vector2(5,20)));
         }
     }
 
     draw(ctx){
+        ctx.fillStyle="#99ff00"
         ctx.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y);
     }
     
 }
 class Bullet extends GameObject{
-    speed = 3;
+    speed = 10;
 
 
     update(){
     }
 
     draw(ctx){
+        ctx.fillStyle ="red"
         ctx.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y)
+        ctx.fillStyle = "white"
     }
     //Form: Quadrat oder rechteck, klein
     //Flugbahn: Linear
@@ -98,7 +112,6 @@ class Cannon extends GameObject{
 
         if(controlSpace && !this.hasShot){
             bullets.push(new Bullet(new Vector2(this.pos.x + this.size.x / 2,this.pos.y),new Vector2(5,20)));
-            console.log(bullets);
             this.hasShot = true;
         }
 
@@ -110,7 +123,9 @@ class Cannon extends GameObject{
     }
 
     draw(ctx){
+        ctx.fillStyle="white"
         ctx.fillRect(this.pos.x,this.pos.y,this.size.x,this.size.y);
+        
     }
 
     // Hier Kollisionslogik mit Geschossen & Invaders einbauen
@@ -139,13 +154,15 @@ class SpaceInvaders extends Scene {
     cols = 5;
     rows = 11;
 
+    bariers = [];
+    bariersRows = 4;
+
     main(){
         
         this.canvas = document.getElementById("canvas");
         this.ctx = canvas.getContext("2d");
         this.ctx.fillStyle = "white";
         this.reset();
-        console.log(this.invaders)
 
         
 
@@ -160,6 +177,8 @@ class SpaceInvaders extends Scene {
         this.player.update(this.playerBullets);
         this.playerBullets.forEach(b => b.pos.y -= 10);
         this.invaderBullets.forEach(b => b.pos.y += 10);
+
+        
 
         for(let i = 0; i < this.invaderBullets.length; i++){
             if(this.invaderBullets[i].checkColision(this.player)){
@@ -182,6 +201,31 @@ class SpaceInvaders extends Scene {
             }
         }
         
+        for(let i = 0; i < this.invaderBullets.length; i++){
+            for(let j = 0; j < this.bariers.length; j++){
+                if(this.bariers[j].checkColision(this.invaderBullets[i])){
+                    this.bariers[j].hp--;
+                    this.invaderBullets.splice(i,1);
+                    break;
+                }
+            }
+        }
+        for(let i = 0; i < this.playerBullets.length; i++){
+            for(let j = 0; j < this.bariers.length; j++){
+                if(this.bariers[j].checkColision(this.playerBullets[i])){
+                    this.bariers[j].hp--;
+                    this.playerBullets.splice(i,1);
+                    break;
+                }
+            }
+        }
+
+        for(let i = 0; i < this.bariers.length; i++){
+            if(this.bariers[i].hp == 0){
+                this.bariers.splice(i,1);
+            }
+        }
+
         this.handleInvaders();
         
     }
@@ -252,6 +296,11 @@ class SpaceInvaders extends Scene {
         let invaderOffset = new Vector2((this.canvas.width - 50) / this.rows,(this.canvas.height -300) / this.cols);
         this.invaders = [];
         this.playerHP = 3;
+        this.bariers = []
+        let bariersOffset = this.canvas.width / this.bariersRows;
+        for(let i = 0; i < this.bariersRows; i++){
+            this.bariers.push(new Barier(new Vector2(bariersOffset * i + 80,this.canvas.height - 150),new Vector2(50,50)))
+        }
         for(let x = 0; x < this.rows; x++){
             for(let y = 0; y < this.cols; y++){
                 this.invaders.push(new Invader(new Vector2(invaderOffset.x * x,invaderOffset.y * y + 25),new Vector2(30,30)))
@@ -267,6 +316,10 @@ class SpaceInvaders extends Scene {
             invader.draw(this.ctx);
         });
 
+        this.bariers.forEach(bar => {
+            bar.draw(this.ctx);
+        })
+        
         this.playerBullets.forEach(b => b.draw(this.ctx))
         this.invaderBullets.forEach(b => b.draw(this.ctx))
     }
