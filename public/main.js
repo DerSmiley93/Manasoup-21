@@ -1,5 +1,5 @@
 let sceneLoader = new SceneLoader([],document.body)
-games = [{name:"Pong", img:"imgs/Pong.png",id:0, locked:false},{name:"Snake",id:1,locked: false},{name:"Space Invaders",id:2, locked:false}];
+games = [{name:"Pong", img:"imgs/Pong.PNG",id:0, locked:false},{name:"Snake", img: "imgs/snake_thumbnail_2.png", id:1,locked: false},{name:"Space Invaders", img: "imgs/space_invaders_thumbnail.png" ,id:2, locked:false}];
 //debugging variable
 let sceneIndex = 0;
 
@@ -99,7 +99,6 @@ class Cannon extends GameObject{
         if(controlSpace && !this.hasShot){
             bullets.push(new Bullet(new Vector2(this.pos.x + this.size.x / 2,this.pos.y),new Vector2(5,20)));
             console.log(bullets);
-            //controlSpace = false;
             this.hasShot = true;
         }
 
@@ -123,6 +122,7 @@ class SpaceInvaders extends Scene {
     '<canvas id="canvas" width="900" height="700"></canvas>'+
     '</div>';
 
+    // '<h2 class="game_title>Space Invaders</h2>' + 
     mainLoop = null;
     ctx = null;
     canvas = null;
